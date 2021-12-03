@@ -1,0 +1,41 @@
+#!/bin/bash
+
+if [ $# -lt 2 ]; then
+  echo "usage : $0 <create|run|test> dayNumber"
+  exit 1
+fi
+
+START_FILE=start.ts
+TEST_FILE=test.ts
+FUNCTIONS_FILE=functions.ts
+INPUT_FILE=input.txt
+
+DIR=day$2
+case $1 in
+  "create")
+    mkdir $DIR
+    cd $DIR
+    touch $START_FILE $FUNCTIONS_FILE $INPUT_FILE
+    cat > $TEST_FILE << EOF
+import {
+    assertEquals,
+} from 'https://deno.land/std@0.80.0/testing/asserts.ts';
+
+Deno.test('should ', () => {
+    assertEquals(1, 1);
+});
+EOF
+    echo "Day $2 created"
+    ;;
+  "test")
+    echo "test day $2"
+    deno test $DIR/$TEST_FILE
+    ;;
+  "run")
+    echo "run day $2"
+    cd $DIR
+    deno run --unstable --watch --allow-read $START_FILE
+    ;;
+esac
+
+exit 0
